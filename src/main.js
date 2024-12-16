@@ -10,6 +10,11 @@ loadMoreBtn.textContent = 'Load More';
 loadMoreBtn.classList.add('load-more', 'hidden');
 document.body.append(loadMoreBtn);
 
+const loader = document.createElement('div');
+loader.classList.add('loader', 'hidden');
+loader.textContent = 'Loading...';
+document.body.append(loader);
+
 let query = '';
 let page = 1;
 const perPage = 15;
@@ -22,6 +27,14 @@ lightbox = new SimpleLightbox('.gallery a', {
 
 function toggleLoadMoreButton(show) {
   loadMoreBtn.classList.toggle('hidden', !show);
+}
+
+function showLoader() {
+  loader.classList.remove('hidden');
+}
+
+function hideLoader() {
+  loader.classList.add('hidden');
 }
 
 function clearGallery() {
@@ -44,7 +57,7 @@ form.addEventListener('submit', async (event) => {
 
   page = 1;
   clearGallery();
-  toggleLoadMoreButton(false);
+  showLoader(); 
 
   try {
     const data = await fetchImages(query, page, perPage);
@@ -56,12 +69,15 @@ form.addEventListener('submit', async (event) => {
     }
   } catch (error) {
     showErrorMessage('An error occurred. Please try again.');
+  } finally {
+    hideLoader();
   }
 });
 
 loadMoreBtn.addEventListener('click', async () => {
   page += 1;
   toggleLoadMoreButton(false);
+  showLoader();
 
   try {
     const data = await fetchImages(query, page, perPage);
@@ -83,5 +99,7 @@ loadMoreBtn.addEventListener('click', async () => {
     }
   } catch (error) {
     showErrorMessage('An error occurred. Please try again.');
+  } finally {
+    hideLoader();
   }
 });
